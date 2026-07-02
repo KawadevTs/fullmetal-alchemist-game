@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+  /* 🌌 Tela inteira preta absoluta e centralização vertical/horizontal */
+  .cutscene-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden; /* Garante que nada crie barras de rolagem irritantes */
+  }
+
+  /* ⏩ Dica/Botão de pular no canto superior direito de forma discreta */
+  .skip-tip {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    background: none;
+    border: none;
+    color: #444;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    transition: color 0.2s;
+    z-index: 10;
+  }
+  
+  .skip-tip:hover {
+    color: #888;
+  }
+
+  /* 🖼️ A MOLDURA: O segredo para domar o tamanho da imagem! */
+  .image-wrapper {
+    position: relative;
+    width: 400px;  /* Tamanho fixo perfeito para pixel art estilo retrô */
+    height: 240px; /* Mantém a proporção retangular clássica */
+    border: 4px solid #fff; /* Borda branca clássica de Undertale */
+    background-color: #000;
+    margin-bottom: 40px; /* Dá espaço para o texto respirar embaixo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* 🎨 A IMAGEM EM SI: Força ela a obedecer o tamanho da moldura */
+  .story-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Impede a imagem de distorcer ou esticar de forma feia */
+    image-rendering: pixelated; /* Mantém os pixels nítidos e charmosos, sem borrar! */
+  }
+
+  /* 💭 O Balão do Truth na C8 (Fica centralizado dentro da moldura da imagem) */
+  .choice-balloon {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    border: 3px solid #fff;
+    padding: 12px;
+    width: 240px;
+    z-index: 5;
+    text-align: center;
+  }
+
+  .choice-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    transition: color 0.2s;
+  }
+
+  .choice-btn:hover {
+    color: #ffff00; /* Amarelo clássico de seleção */
+  }
+
+  /* 📜 Caixa contendo o bloco de texto */
+  .text-wrapper {
+    width: 550px;  /* Largura controlada para o texto quebrar linha bonito */
+    height: 100px; /* Altura fixa para evitar que a tela trema ao digitar */
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+
+  .story-text {
+    font-size: 14px;
+    line-height: 1.8;
+    text-align: left;
+    margin: 0;
+    letter-spacing: 0.5px;
+  }
+
+  /* 💡 Cursor piscando no final do texto */
+  .cursor {
+    display: inline-block;
+    animation: piscar 0.8s infinite;
+    margin-left: 4px;
+  }
+
+  @keyframes piscar {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+
+  /* 🧭 Botão de seta para avançar (canto inferior direito) */
+  .next-btn {
+    position: absolute;
+    bottom: 40px;
+    right: 60px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 28px;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  .next-btn:hover {
+    transform: scale(1.1);
+  }

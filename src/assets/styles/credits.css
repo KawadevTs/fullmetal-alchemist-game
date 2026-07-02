@@ -1,0 +1,113 @@
+/* 🌍 O espaço total da tela do jogo */
+  .menu2 {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #111;
+  }
+
+  /* 🖼️ O plano de fundo esticado corretamente */
+  .background2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1; /* Fica na camada de trás */
+  }
+
+  /* 📦 A janela flutuante dos créditos */
+  .menu-container2 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2; /* Fica na camada da frente (por cima do fundo) */
+
+    width: 320px;
+    height: 440px;
+    padding: 30px 20px;
+    box-sizing: border-box;
+    
+    background-color: #000;
+    font-family: 'Press Start 2P', monospace;
+    border: 6px solid #fff;
+    outline: 6px solid #000;
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.9); 
+    
+    display: flex;
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center;    
+    gap: 20px;
+  }
+
+  h2 {
+    font-size: 18px;
+    margin: 0;
+    color: #fff;
+    text-shadow: 2px 2px #555;
+    text-align: center;
+  }
+
+  .option-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+    gap: 12px;
+    width: 100%; 
+  }
+
+  .label {
+    font-size: 10px;
+    color: #aaa;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .credits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+    text-align: center;
+  }
+
+  .credits-list p {
+    margin: 0;
+    font-size: 11px;
+    color: #fff;
+    letter-spacing: 1px;
+  }
+
+  hr {
+    width: 90%;
+    border: 0;
+    border-top: 4px dashed #555;
+    margin: 0;
+  }
+
+  .pixel-btn {
+    background-color: #e0e0e0;
+    color: #000;
+    border: 4px solid #fff;
+    outline: 4px solid #000;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    width: 90%; 
+    padding: 12px 0;
+    cursor: pointer;
+    box-shadow: inset -4px -4px 0px #999;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .pixel-btn:active {
+    box-shadow: inset 4px 4px 0px #999;
+    transform: translateY(2px); 
+  }
