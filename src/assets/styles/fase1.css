@@ -1,0 +1,144 @@
+/* ─── Reset ─── */
+.fase1 {
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'Press Start 2P', monospace;
+  position: relative;
+}
+
+/* ─── Viewport / câmera ─── */
+.scene {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ─── Mundo (background + sprites) ─── */
+.world {
+  width: 1690px;
+  height: 100vh;
+  position: relative;
+  /* scrollX aplicado via style="transform: translateX(...)" */
+}
+
+.world-bg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  image-rendering: auto;
+}
+
+/* ─── Sprites dos personagens ─── */
+.char {
+  position: absolute;
+  bottom: 127px;
+  width: 100px;
+  height: 140px;
+  background-size: contain;
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  transition: none;
+}
+
+/* ─── Portal ─── */
+.portal {
+  position: absolute;
+  bottom: 127px;
+  width: 80px;
+  height: 135px;
+  background: radial-gradient(circle, #6a0dad 0%, #4a0080 40%, transparent 70%);
+  border-radius: 50%;
+  box-shadow: 0 0 30px #8a2be2, 0 0 60px #4a0080;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+/* ─── HUD ─── */
+.hud {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #666;
+  font-size: 14px;
+  letter-spacing: 2px;
+  z-index: 10;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* ─── Caixa de diálogo (reaproveita estilo da cutscene) ─── */
+.dialogue-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  padding: 20px 40px 40px;
+  box-sizing: border-box;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85) 30%);
+}
+
+.dialogue-box {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(0, 0, 0, 0.92);
+  border: 3px solid #555;
+  padding: 28px 32px;
+}
+
+.dialogue-text {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.dialogue-cursor {
+  display: inline-block;
+  animation: blink 0.8s infinite;
+  margin-left: 4px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.dialogue-hint {
+  color: #666;
+  font-size: 12px;
+  margin-top: 14px;
+  text-align: right;
+  letter-spacing: 1px;
+}
+
+/* ─── Fade out para transição ─── */
+.fade-overlay {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  z-index: 50;
+  pointer-events: none;
+  animation: fadeOut 1s ease-in forwards;
+}
+
+@keyframes fadeOut {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
