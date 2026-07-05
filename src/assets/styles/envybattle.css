@@ -1,0 +1,141 @@
+.envybattle {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  font-family: 'Press Start 2P', monospace;
+  position: relative;
+}
+
+.bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.char {
+  position: absolute;
+  bottom: 280px;
+  width: 103px;
+  height: 143px;
+  background-size: contain;
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.char.envy {
+  left: 50%;
+  transform: translateX(-50%);
+  width: 134px;
+  height: 174px;
+  z-index: 1;
+}
+
+.char.edward {
+  left: 10%;
+  bottom: 272px;
+  width: 134px;
+  height: 174px;
+  z-index: 1;
+}
+
+.dialogue-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  padding: 20px 40px 40px;
+  box-sizing: border-box;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85) 30%);
+}
+
+.dialogue-box {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(0, 0, 0, 0.92);
+  border: 3px solid #555;
+  padding: 28px 32px;
+}
+
+.dialogue-text {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.dialogue-cursor {
+  display: inline-block;
+  animation: blink 0.8s infinite;
+  margin-left: 4px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+.dialogue-hint {
+  color: #666;
+  font-size: 12px;
+  margin-top: 14px;
+  text-align: right;
+  letter-spacing: 1px;
+}
+
+.choices {
+  position: absolute;
+  bottom: 200px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 640px;
+  padding: 0 40px;
+  box-sizing: border-box;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.choice-btn {
+  background: rgba(0, 0, 0, 0.92);
+  border: 3px solid #555;
+  padding: 16px 24px;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  text-align: left;
+  line-height: 1.6;
+  letter-spacing: 0.5px;
+}
+
+.choice-btn:hover {
+  color: #ffff00;
+  border-color: #ffff00;
+}
+
+.battle-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  text-align: center;
+}
+
+.battle-text {
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}

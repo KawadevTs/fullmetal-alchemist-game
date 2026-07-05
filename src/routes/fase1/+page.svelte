@@ -2,12 +2,13 @@
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
   import "../../assets/styles/fase1.css";
-  import { language } from "$lib/stores";
+  import { language, stopMusic } from "$lib/stores";
 
   // ─── Constantes ─────────────────────────────────
   const WORLD_W = 1690;
   const SPEED = 4;
   const WINRY_X = 700;
+  const VOVO_X = 1100;
   const PORTAL_X = 1580;
   const DIALOGUE_RANGE = 65;
   const WALK_RIGHT = "/images/fase1/edward_walk.png";
@@ -27,6 +28,21 @@
     ],
   };
 
+  const VOVO_FALA: Record<string, string[]> = {
+    pt: [
+      "Vovó: Então... vocês chegaram até aqui. Eu tinha esperança de que encontrassem respostas, mas este lugar guarda mais mentiras do que verdades.",
+      "Edward: Não importa. Se existir qualquer pista sobre a Pedra Filosofal, nós vamos encontrá-la.",
+      "Edward: Mesmo que seja perigoso.",
+      "Uma risada ecoa pelas ruínas.",
+    ],
+    en: [
+      "Grandma: So... you've made it this far. I hoped you'd find answers here, but this place holds more lies than truths.",
+      "Edward: It doesn't matter. If there's any clue about the Philosopher's Stone, we'll find it.",
+      "Edward: Even if it's dangerous.",
+      "A laugh echoes through the ruins.",
+    ],
+  };
+
   const PORTAL_FALA: Record<string, string[]> = {
     pt: ["Edward: Esse portal... eu conheço ele."],
     en: ["Edward: This portal... I know it."],
@@ -43,9 +59,11 @@
   let typed = $state("");
   let charIdx = $state(0);
   let metWinry = $state(false);
+  let metVovo = $state(false);
   let passedPortal = $state(false);
   let fading = $state(false);
   let inPortalThought = $state(false);
+  let dialogueSource = $state<"winry" | "vovo" | "portal">("winry");
   let lang = $state("pt");
   let vw = $state(0);
 
@@ -92,6 +110,11 @@
       triggerDial();
     }
 
+    // Colisão com Vovó
+    if (!metVovo && !inDialogue && !inPortalThought && Math.abs(playerX - VOVO_X) < DIALOGUE_RANGE) {
+      triggerVovoDial();
+    }
+
     // Portal no fim do caminho — pensamento antes de entrar
     if (!passedPortal && !inPortalThought && playerX >= PORTAL_X) {
       triggerPortalThought();
@@ -103,8 +126,18 @@
   // ─── Diálogo ───────────────────────────────────
   function triggerDial() {
     inDialogue = true;
+    dialogueSource = "winry";
     right = false; left = false; walking = false;
     dialLines = FALA[lang] ?? FALA.pt;
+    dialIdx = 0;
+    startType();
+  }
+
+  function triggerVovoDial() {
+    inDialogue = true;
+    dialogueSource = "vovo";
+    right = false; left = false; walking = false;
+    dialLines = VOVO_FALA[lang] ?? VOVO_FALA.pt;
     dialIdx = 0;
     startType();
   }
@@ -128,12 +161,13 @@
     if (dialIdx < dialLines.length - 1) {
       dialIdx++; startType();
     } else {
-      if (inPortalThought) {
+      inDialogue = false;
+      if (dialogueSource === "portal") {
         inPortalThought = false;
-        inDialogue = false;
         enterPortal();
+      } else if (dialogueSource === "vovo") {
+        metVovo = true;
       } else {
-        inDialogue = false;
         metWinry = true;
       }
     }
@@ -142,6 +176,7 @@
   // ─── Portal — pensamento antes de entrar ───────
   function triggerPortalThought() {
     inPortalThought = true;
+    dialogueSource = "portal";
     right = false; left = false; walking = false;
     dialLines = PORTAL_FALA[lang] ?? PORTAL_FALA.pt;
     dialIdx = 0;
@@ -149,6 +184,7 @@
   }
 
   function enterPortal() {
+    stopMusic();
     passedPortal = true;
     fading = true;
     setTimeout(() => goto("/envybattle"), 1000);
@@ -192,6 +228,12 @@
         style="left: {WINRY_X}px; background-image: url('/images/fase1/winry.png');"
       ></div>
 
+      <!-- Vovó (NPC) -->
+      <div
+        class="char vovo"
+        style="left: {VOVO_X}px; background-image: url('/images/fase1/vovo.png');"
+      ></div>
+
       <!-- Edward (jogador) -->
       <div
         class="char player"
@@ -208,8 +250,10 @@
   <div class="hud">
     {#if !metWinry}
       {lang === "pt" ? "→ Use D / ➡ para andar" : "→ Use D / ➡ to walk"}
-    {:else if !passedPortal}
+    {:else if !metVovo}
       {lang === "pt" ? "Continue em frente..." : "Keep moving forward..."}
+    {:else if !passedPortal}
+      {lang === "pt" ? "Siga até o portal..." : "Head to the portal..."}
     {/if}
   </div>
 
