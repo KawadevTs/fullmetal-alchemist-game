@@ -309,21 +309,18 @@
     transform: translate(-50%, -50%);
   }
 
-  .obstacle-face {
-    position: absolute;
-    width: 36px;
-    height: 44px;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    image-rendering: pixelated;
-    z-index: 5;
-  }
-
-  .obstacle-arm {
+  .obstacle-bar {
     position: absolute;
     z-index: 5;
     border-radius: 4px;
+  }
+
+  .obstacle-bar.-face {
+    background: rgba(180, 80, 80, 0.8);
+  }
+
+  .obstacle-bar.-arm {
+    background: rgba(120, 60, 160, 0.8);
   }
 
   .dodge-timer {

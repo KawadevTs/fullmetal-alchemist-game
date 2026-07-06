@@ -2,15 +2,15 @@
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
   import "../../assets/styles/envybattle.css";
-  import { language, playMusic, stopMusic } from "$lib/stores";
+  import { language, playMusic, stopMusic, saveProgress, loadProgress } from "$lib/stores";
   import type { BattlePhase, Obstacle } from "$lib/envyBattleLogic";
   import {
     ENVY_MAX_HP, PLAYER_MAX_HP, LUTAR_DANO_BASE, ENVY_DEF_BASE,
     DANO_ESQUIVA, DODGE_DURATION_MS, HEART_SIZE, DODGE_BOX_W, DODGE_BOX_H,
-    INVINCIBLE_MS, TRANSFORM_DURATION_MS, WINRY_TRANSFORM_DURATION_MS,
+    INVINCIBLE_MS,
     BATTLE_INTRO_FALA, ENVY_TURN_VARIACOES, LUTAR_VARIACOES,
     BLEFAR_FALA, FUGIR_FAIL_FALA, FUGIR_OK_FALA,
-    VITORIA_FALA, DERROTA_FALA, FINAL_BLOW_FALA, ITEM_POCAO_FALA, ITEM_ELIXIR_FALA,
+    DERROTA_FALA, FINAL_BLOW_FALA, ITEM_POCAO_FALA, ITEM_ELIXIR_FALA,
     clamp, randomBetween, calcularDanoLutar
   } from "$lib/envyBattleLogic";
 
@@ -160,14 +160,34 @@
     if (dialIdx < dialLines.length - 1) {
       dialIdx++;
       startType();
+      if (battlePhase === "playerAction" || battlePhase === "envyTurn") {
+        if (isTransformText(dialLines[dialIdx])) {
+          portraitSrc = `/images/envybattle/${Math.random() < 0.5 ? "winry_portrait.png" : "trisha.png"}`;
+        } else {
+          portraitSrc = "/images/envybattle/envy_battle.png";
+        }
+      }
       return;
     }
-    // End of dialogue block — transition
+    // End of dialogue block — revert portrait and transition
+    portraitSrc = "/images/envybattle/envy_battle.png";
     if (phase === "battle") {
       advanceBattle();
     } else {
       advanceIntro();
     }
+  }
+
+  function isTransformText(text: string): boolean {
+    const lower = text.toLowerCase();
+    return (
+      lower.includes("assumiu") ||
+      lower.includes("appearance of someone") ||
+      lower.includes("rostos familiares") ||
+      lower.includes("familiar faces") ||
+      lower.includes("tomar forma") ||
+      lower.includes("take shape")
+    );
   }
 
   function advanceIntro() {
@@ -308,7 +328,6 @@
         if (isFinalBlow) {
           envyHp = 0;
           showHitFlash();
-          portraitSrc = `/images/envybattle/${Math.random() < 0.5 ? "winry_portrait.png" : "trisha.png"}`;
           battlePhase = "finalBlow";
           showDialogue(FINAL_BLOW_FALA[lang] ?? FINAL_BLOW_FALA.pt);
         } else {
@@ -317,12 +336,6 @@
             envyEnraged = true;
           }
           showHitFlash();
-          const isWinry = Math.random() < 0.5;
-          const flash = isWinry ? "winry_portrait.png" : "trisha.png";
-          const duration = isWinry ? WINRY_TRANSFORM_DURATION_MS : TRANSFORM_DURATION_MS;
-          const prev = portraitSrc;
-          portraitSrc = `/images/envybattle/${flash}`;
-          setTimeout(() => { portraitSrc = prev; }, duration);
           const danoLine = `${lang === "pt" ? "Envy sofreu dano!" : "Envy took damage!"}`;
           pendingAction = "afterLutar";
           showDialogue([danoLine]);
@@ -340,14 +353,8 @@
         }
         blefarStage++;
         if (blefarStage === 1) envyDef = 12;
-        else if (blefarStage === 2) {
-          envyAtk = 20; envyDef = 9;
-          portraitSrc = "/images/envybattle/trisha.png";
-          setTimeout(() => {
-            portraitSrc = "/images/envybattle/envy_battle.png";
-          }, TRANSFORM_DURATION_MS);
-        }
-        else if (blefarStage === 3) { envyAtk = 15; portraitSrc = "/images/envybattle/envy_battle.png"; }
+        else if (blefarStage === 2) { envyAtk = 20; envyDef = 9; }
+        else if (blefarStage === 3) { envyAtk = 15; }
         showEnvyTurn();
         break;
       }
@@ -358,6 +365,7 @@
       case "fugir": {
         if (blefarStage >= 3) {
           stopMusic();
+          saveProgress("envyBattle");
           battlePhase = "fled";
           inDialogue = false;
         } else {
@@ -375,11 +383,13 @@
 
   function showDefeat() {
     stopMusic();
+    saveProgress("envyBattle");
     battlePhase = "defeat";
   }
 
   function showEnding() {
     stopMusic();
+    saveProgress("postEnvy");
     battlePhase = "ending";
     setTimeout(() => {
       goto("/");
@@ -410,10 +420,7 @@
       case 2: x = randomBetween(0, DODGE_BOX_W - w); y = DODGE_BOX_H; dir = "up"; break;
       default: x = -w; y = randomBetween(0, DODGE_BOX_H - h); dir = "right"; break;
     }
-    const img = type === "face"
-      ? `/images/envybattle/${Math.random() < 0.5 ? "winry_portrait.png" : "trisha.png"}`
-      : undefined;
-    obstacles = [...obstacles, { id, x, y, w, h, speed, dir, type, img }];
+    obstacles = [...obstacles, { id, x, y, w, h, speed, dir, type }];
   }
 
   function startDodge() {
@@ -537,7 +544,12 @@
   onMount(() => {
     window.addEventListener("keydown", kd);
     window.addEventListener("keyup", ku);
-    showDialogue(MYSTERY_FALA[lang] ?? MYSTERY_FALA.pt);
+    if (loadProgress() === "envyBattle") {
+      phase = "battle";
+      enterBattle();
+    } else {
+      showDialogue(MYSTERY_FALA[lang] ?? MYSTERY_FALA.pt);
+    }
   });
 
   onDestroy(() => {
@@ -691,11 +703,7 @@
           <div class="dodge-heart" style="left: {heartX}px; top: {heartY}px;">&#9829;</div>
 
           {#each obstacles as obs (obs.id)}
-            {#if obs.type === "face"}
-              <div class="obstacle-face" style="left: {obs.x}px; top: {obs.y}px; background-image: url('{obs.img}');"></div>
-            {:else}
-              <div class="obstacle-arm" style="left: {obs.x}px; top: {obs.y}px; width: {obs.w}px; height: {obs.h}px; background: rgba(180, 80, 80, 0.8);"></div>
-            {/if}
+            <div class="obstacle-bar -{obs.type}" style="left: {obs.x}px; top: {obs.y}px; width: {obs.w}px; height: {obs.h}px;"></div>
           {/each}
 
           <div class="dodge-timer">{dodgeSecondsLeft}s</div>

@@ -20,7 +20,6 @@ export interface Obstacle {
   speed: number;
   dir: "up" | "down" | "left" | "right";
   type: "face" | "arm";
-  img?: string;
 }
 
 export const ENVY_MAX_HP = 32;

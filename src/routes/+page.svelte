@@ -2,7 +2,7 @@
   import "../assets/styles/menu.css";
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
-  import { language, playMusic, stopMusic } from "$lib/stores";
+  import { language, playMusic, stopMusic, loadProgress, clearProgress } from "$lib/stores";
 
   const music = new Audio("/music/theme.mp3");
   music.loop = true;
@@ -24,16 +24,32 @@
   function selectOption(): void {
     switch (selectedIndex) {
       case 0: // NOVO JOGO
+        clearProgress();
         music.pause();
   playMusic("/music/newgame.mp3");
   goto("/cutscene");
   break;
 
       case 1: // CONTINUE
-        if (currentLanguage === "pt") {
-          alert("Sistema de save ainda não implementado.");
-        } else {
-          alert("Save system not implemented yet.");
+        {
+          const saved = loadProgress();
+          if (saved === "envyBattle") {
+            music.pause();
+            playMusic("/music/newgame.mp3");
+            goto("/envybattle");
+          } else if (saved === "postEnvy") {
+            if (currentLanguage === "pt") {
+              alert("Continuação ainda não disponível.");
+            } else {
+              alert("Continuation not yet available.");
+            }
+          } else {
+            if (currentLanguage === "pt") {
+              alert("Nenhum save encontrado.");
+            } else {
+              alert("No save found.");
+            }
+          }
         }
         break;
 

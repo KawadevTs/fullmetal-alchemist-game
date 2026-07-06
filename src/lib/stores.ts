@@ -25,3 +25,19 @@ export function stopMusic() {
     currentAudio = null;
   }
 }
+
+// ─── Save system ───
+
+const SAVE_KEY = "fullmetal_save";
+
+export function saveProgress(progress: string) {
+  localStorage.setItem(SAVE_KEY, progress);
+}
+
+export function loadProgress(): string | null {
+  return localStorage.getItem(SAVE_KEY);
+}
+
+export function clearProgress() {
+  localStorage.removeItem(SAVE_KEY);
+}
