@@ -79,6 +79,7 @@
 
 <div class="menu">
   <img src="/images/background.png" alt="Background" class="background" />
+  <div class="dark-overlay"></div>
   <img src="/images/logo.png" alt="Logo" class="logo" />
 
   <div class="menu-container">

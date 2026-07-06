@@ -1,141 +1,415 @@
-.envybattle {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  font-family: 'Press Start 2P', monospace;
-  position: relative;
-}
+  .envybattle {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Press Start 2P', monospace;
+    position: relative;
+  }
 
-.bg-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
-}
+  .bg-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
 
-.char {
-  position: absolute;
-  bottom: 280px;
-  width: 103px;
-  height: 143px;
-  background-size: contain;
-  background-position: bottom center;
-  background-repeat: no-repeat;
+  .char {
+    position: absolute;
+    bottom: 280px;
+    width: 103px;
+    height: 143px;
+    background-size: contain;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+  }
+
+  .char.envy {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 174px;
+    z-index: 1;
+  }
+
+  .char.edward {
+    left: 10%;
+    bottom: 272px;
+    width: 134px;
+    height: 174px;
+    z-index: 1;
+  }
+
+  /* ─── Caixa de diálogo (reutilizada da Fase 1) ─── */
+  .dialogue-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    padding: 20px 40px 40px;
+    box-sizing: border-box;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85) 30%);
+  }
+
+  .dialogue-box {
+    width: 100%;
+    max-width: 900px;
+    background: rgba(0, 0, 0, 0.92);
+    border: 3px solid #555;
+    padding: 28px 32px;
+  }
+
+  .dialogue-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #fff;
+    margin: 0;
+    letter-spacing: 0.5px;
+  }
+
+  .dialogue-cursor {
+    display: inline-block;
+    animation: blink 0.8s infinite;
+    margin-left: 4px;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+  }
+
+  .dialogue-hint {
+    color: #666;
+    font-size: 12px;
+    margin-top: 14px;
+    text-align: right;
+    letter-spacing: 1px;
+  }
+
+  /* ─── Escolhas iniciais (pré-batalha) ─── */
+  .choices {
+    position: absolute;
+    bottom: 200px;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    max-width: 640px;
+    padding: 0 40px;
+    box-sizing: border-box;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .choice-btn {
+    background: rgba(0, 0, 0, 0.92);
+    border: 3px solid #555;
+    padding: 16px 24px;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    text-align: left;
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+  }
+
+  .choice-btn:hover {
+    color: #ffff00;
+    border-color: #ffff00;
+  }
+
+  /* ═══════════════════════════════════════════════
+    LAYOUT DA BATALHA
+    ═══════════════════════════════════════════════ */
+
+  .battle-scene {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 5vh;
+    pointer-events: none;
+  }
+
+  .battle-scene > * {
+    pointer-events: auto;
+  }
+
+/* ─── Retrato central ─── */
+.battle-portrait {
+  width: 140px;
+  height: 180px;
   image-rendering: pixelated;
+  margin-bottom: 16px;
 }
 
-.char.envy {
-  left: 50%;
-  transform: translateX(-50%);
-  width: 134px;
-  height: 174px;
-  z-index: 1;
+.portrait-battle {
+  height: 60vh;
+  width: auto;
+  max-width: 80vw;
+  margin-bottom: 10px;
+  object-fit: contain;
 }
 
-.char.edward {
-  left: 10%;
-  bottom: 272px;
-  width: 134px;
-  height: 174px;
-  z-index: 1;
-}
+  /* ─── HP Bar ─── */
+  .hp-container {
+    width: 320px;
+    margin-bottom: 24px;
+  }
 
-.dialogue-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  z-index: 20;
-  display: flex;
-  justify-content: center;
-  padding: 20px 40px 40px;
-  box-sizing: border-box;
-  background: linear-gradient(transparent, rgba(0,0,0,0.85) 30%);
-}
+  .hp-label {
+    color: #fff;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
 
-.dialogue-box {
-  width: 100%;
-  max-width: 900px;
-  background: rgba(0, 0, 0, 0.92);
-  border: 3px solid #555;
-  padding: 28px 32px;
-}
+  .hp-bar-bg {
+    width: 100%;
+    height: 18px;
+    background: #333;
+    border: 2px solid #666;
+    position: relative;
+  }
 
-.dialogue-text {
-  font-size: 16px;
-  line-height: 1.8;
-  color: #fff;
-  margin: 0;
-  letter-spacing: 0.5px;
-}
+  .hp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0f0, #0c0);
+    transition: width 0.3s;
+  }
 
-.dialogue-cursor {
-  display: inline-block;
-  animation: blink 0.8s infinite;
-  margin-left: 4px;
-}
+  .hp-bar-fill.low {
+    background: linear-gradient(90deg, #f00, #c00);
+  }
 
-@keyframes blink {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 1; }
-}
+  .hp-bar-fill.mid {
+    background: linear-gradient(90deg, #ff0, #cc0);
+  }
 
-.dialogue-hint {
-  color: #666;
-  font-size: 12px;
-  margin-top: 14px;
-  text-align: right;
-  letter-spacing: 1px;
-}
+  .hp-text {
+    color: #fff;
+    font-size: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    letter-spacing: 1px;
+  }
 
-.choices {
-  position: absolute;
-  bottom: 200px;
-  z-index: 30;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  width: 100%;
-  max-width: 640px;
-  padding: 0 40px;
-  box-sizing: border-box;
-  left: 50%;
-  transform: translateX(-50%);
-}
+  /* ─── Menu de ações ─── */
+  .action-menu {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 600px;
+  }
 
-.choice-btn {
-  background: rgba(0, 0, 0, 0.92);
-  border: 3px solid #555;
-  padding: 16px 24px;
-  color: #fff;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 11px;
-  cursor: pointer;
-  transition: color 0.2s, border-color 0.2s;
-  text-align: left;
-  line-height: 1.6;
-  letter-spacing: 0.5px;
-}
+  .action-btn {
+    background: rgba(0, 0, 0, 0.92);
+    border: 3px solid #555;
+    padding: 14px 22px;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    min-width: 120px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
 
-.choice-btn:hover {
-  color: #ffff00;
-  border-color: #ffff00;
-}
+  .action-btn:hover {
+    color: #ffff00;
+    border-color: #ffff00;
+  }
 
-.battle-placeholder {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-  text-align: center;
-}
+  /* Sub-menu de item */
+  .item-menu {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
 
-.battle-text {
-  color: #fff;
-  font-size: 18px;
-  letter-spacing: 2px;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-}
+  .item-btn {
+    background: rgba(0, 0, 0, 0.92);
+    border: 3px solid #555;
+    padding: 14px 22px;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  .item-btn:hover {
+    color: #ffff00;
+    border-color: #ffff00;
+  }
+
+  .item-btn.back {
+    border-color: #833;
+  }
+
+  .item-btn.back:hover {
+    color: #f66;
+    border-color: #f66;
+  }
+
+  /* ═══════════════════════════════════════════════
+    ESQUIVA - "Transformação Cruel"
+    ═══════════════════════════════════════════════ */
+
+  .dodge-wrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 15;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .dodge-box {
+    position: relative;
+    width: 400px;
+    height: 300px;
+    border: 3px solid #888;
+    background: rgba(0, 0, 0, 0.85);
+    overflow: hidden;
+  }
+
+  .dodge-heart {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+    color: #f44;
+    text-shadow: 0 0 6px #f00;
+    transform: translate(-50%, -50%);
+  }
+
+  .obstacle-face {
+    position: absolute;
+    width: 36px;
+    height: 44px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    z-index: 5;
+  }
+
+  .obstacle-arm {
+    position: absolute;
+    z-index: 5;
+    border-radius: 4px;
+  }
+
+  .dodge-timer {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    color: #aaa;
+    font-size: 10px;
+    letter-spacing: 1px;
+    z-index: 20;
+  }
+
+  /* ═══════════════════════════════════════════════
+    TELAS DE RESULTADO
+    ═══════════════════════════════════════════════ */
+
+  .result-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 25;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.85);
+  }
+
+  .result-text {
+    color: #fff;
+    font-size: 22px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+    margin-bottom: 30px;
+    text-align: center;
+    line-height: 2;
+  }
+
+  .result-btn {
+    background: rgba(0, 0, 0, 0.92);
+    border: 3px solid #555;
+    padding: 14px 28px;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .result-btn:hover {
+    color: #ffff00;
+    border-color: #ffff00;
+  }
+
+  /* ─── Enraged indicator ─── */
+  .enraged-glow {
+    box-shadow: 0 0 20px #f00, 0 0 40px #800;
+  }
+
+  /* ─── Hit flash ─── */
+  .hit-flash {
+    filter: brightness(2.5) saturate(0);
+    transition: filter 0s;
+  }
+
+  /* ─── Ending screen (fade to black + "Continua...") ─── */
+  .ending-screen {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
+    animation: fadeIn 1.5s ease-in forwards;
+  }
+
+  .ending-text {
+    color: #fff;
+    font-size: 20px;
+    letter-spacing: 4px;
+    text-align: center;
+    animation: fadeIn 1s ease-in forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
