@@ -2,7 +2,7 @@
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
   import "../../assets/styles/fase1.css";
-  import { language, stopMusic } from "$lib/stores";
+  import { language, stopMusic, playMusic } from "$lib/stores";
 
   // ─── Constantes ─────────────────────────────────
   const WORLD_W = 1690;
@@ -184,7 +184,6 @@
   }
 
   function enterPortal() {
-    stopMusic();
     passedPortal = true;
     fading = true;
     setTimeout(() => goto("/envybattle"), 1000);
@@ -193,6 +192,7 @@
   // ─── Lifecycle ─────────────────────────────────
   onMount(() => {
     vw = window.innerWidth;
+    playMusic("/music/newgame.mp3");
     window.addEventListener("keydown", kd);
     window.addEventListener("keyup", ku);
     raf = requestAnimationFrame(loop);
@@ -212,15 +212,16 @@
 
 <div class="fase1">
   <div class="scene">
-    <div class="world" style="transform: translateX(-{scrollX}px);">
 
-      <!-- Fundo panorâmico -->
-      <img
-        class="world-bg"
-        src="/images/fase1/background.png"
-        alt="Vila abandonada ao entardecer"
-        draggable="false"
-      />
+    <!-- Fundo panorâmico responsivo (largura total) -->
+    <img
+      class="world-bg"
+      src="/images/fase1/background.png"
+      alt="Vila abandonada ao entardecer"
+      draggable="false"
+    />
+
+    <div class="world" style="transform: translateX(-{scrollX}px);">
 
       <!-- Winry (NPC) -->
       <div
@@ -249,7 +250,9 @@
   <!-- HUD -->
   <div class="hud">
     {#if !metWinry}
-      {lang === "pt" ? "→ Use D / ➡ para andar" : "→ Use D / ➡ to walk"}
+      {lang === "pt"
+        ? "Use as teclas A e D ou as setas esquerda e direita para movimentar o personagem."
+        : "Use A and D keys or left and right arrows to move the character."}
     {:else if !metVovo}
       {lang === "pt" ? "Continue em frente..." : "Keep moving forward..."}
     {:else if !passedPortal}

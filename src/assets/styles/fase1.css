@@ -19,20 +19,25 @@
   position: relative;
 }
 
-/* ─── Mundo (background + sprites) ─── */
+/* ─── Fundo responsivo (largura total da tela) ─── */
+.world-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  z-index: 0;
+  image-rendering: auto;
+}
+
+/* ─── Mundo (sprites e cenário) ─── */
 .world {
   width: 1690px;
   height: 100vh;
   position: relative;
+  z-index: 1;
   /* scrollX aplicado via style="transform: translateX(...)" */
-}
-
-.world-bg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-  image-rendering: auto;
 }
 
 /* ─── Sprites dos personagens ─── */

@@ -56,6 +56,17 @@ body{
   z-index: 2;
 }
 
+.menu-contrast {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 680px;
+  height: 100%;
+  background: linear-gradient(to right, #000 0%, rgba(0,0,0,0.9) 20%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.2) 75%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
 /* ========================= */
 /* LOGO */
 /* ========================= */
@@ -64,10 +75,10 @@ body{
 
     position:absolute;
 
-    top:40px;
+    top:70px;
     left:80px;
 
-    width:420px;
+    width:520px;
 
     z-index:3;
 
@@ -83,7 +94,7 @@ body{
     position:absolute;
 
     left:95px;
-    top:310px;
+    top:350px;
 
     z-index:3;
 
@@ -145,4 +156,19 @@ body{
     color:black;
 
     transform:translateX(10px);
+}
+
+.footer-text {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: #aaa;
+  font-size: 18px;
+  font-family: monospace;
+  z-index: 3;
+  padding: 0 20px;
+  box-sizing: border-box;
+  pointer-events: none;
 }

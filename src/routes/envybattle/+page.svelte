@@ -256,7 +256,6 @@
   function enterBattle() {
     battlePhase = "battleIntro";
     portraitSrc = "/images/envybattle/envy_battle.png";
-    playMusic("/music/boss_theme.mp3", true);
     showDialogue(BATTLE_INTRO_FALA[lang] ?? BATTLE_INTRO_FALA.pt);
   }
 

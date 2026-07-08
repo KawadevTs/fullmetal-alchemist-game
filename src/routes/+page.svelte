@@ -4,12 +4,12 @@
   import { goto } from "$app/navigation";
   import { language, playMusic, stopMusic, loadProgress, clearProgress } from "$lib/stores";
 
-  const music = new Audio("/music/theme.mp3");
+  const music = new Audio("/music/newgame.mp3");
   music.loop = true;
   
   const textos: Record<"pt" | "en", string[]> = {
-    pt: ["NOVO JOGO", "CONTINUE", "OPÇÕES", "CRÉDITOS", "SAIR"],
-    en: ["NEW GAME", "CONTINUE", "OPTIONS", "CREDITS", "EXIT"]
+    pt: ["NOVO JOGO", "CONTINUE", "OPÇÕES", "CRÉDITOS", "SOBRE", "SAIR"],
+    en: ["NEW GAME", "CONTINUE", "OPTIONS", "CREDITS", "ABOUT", "EXIT"]
   };
 
   let selectedIndex = $state<number>(0);
@@ -61,7 +61,11 @@
         goto("/credits");
         break;
 
-      case 4: // SAIR
+      case 4: // SOBRE
+        window.open("https://game-demoweek.vercel.app/", "_blank");
+        break;
+
+      case 5: // SAIR
         window.close();
         break;
     }
@@ -94,8 +98,9 @@
 </script>
 
 <div class="menu">
-  <img src="/images/background.png" alt="Background" class="background" />
+  <video src="/motion-background.mp4" autoplay muted loop playsinline class="background"></video>
   <div class="dark-overlay"></div>
+  <div class="menu-contrast"></div>
   <img src="/images/logo.png" alt="Logo" class="logo" />
 
   <div class="menu-container">
@@ -111,5 +116,11 @@
         {option}
       </button>
     {/each}
+  </div>
+
+  <div class="footer-text">
+    {currentLanguage === "pt"
+      ? "Projeto desenvolvido para fins acadêmicos, com inspirações no jogo Full Metal Alchemist e no jogo Undertale."
+      : "Academic project inspired by Full Metal Alchemist and Undertale."}
   </div>
 </div>

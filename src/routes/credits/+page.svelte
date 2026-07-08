@@ -14,15 +14,15 @@
 
     <div class="option-group">
       <span class="label">
-        {$language === "pt" ? "Desenvolvimento" : "Development"}
+        {$language === "pt" ? "Desenvolvido por:" : "Developed by:"}
       </span>
 
       <div class="credits-list">
-        <p>Elcana</p>
-        <p>Gabrielly</p>
-        <p>Nathasha</p>
-        <p>Shislayny</p>
-        <p>Wesllan</p>
+        <p>Gabrielly Oliveira</p>
+        <p>Natasha Scanoni</p>
+        <p>Shislayny Evelen</p>
+        <p>Tacila Souza</p>
+        <p>Wesllan Kawã</p>
       </div>
     </div>
 

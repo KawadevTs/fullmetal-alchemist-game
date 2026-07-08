@@ -2,43 +2,14 @@
   import "../../assets/styles/cutscene.css";
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
-  import { language, volume } from "$lib/stores";
+  import { language, volume, playMusic, stopMusic } from "$lib/stores";
 
   // 🎵 MÚSICA DA CUTSCENE
-  const music = new Audio("/music/theme.mp3");
-  music.loop = true;
-  let musicStarted = false;
   let currentVolume = $state<number>(0.1);
 
   const unsubscribeVolume = volume.subscribe((value: number) => {
     currentVolume = value;
-    music.volume = currentVolume;
   });
-
-  function startMusic(): void {
-    if (!musicStarted) {
-      music.play()
-        .then(() => {
-          console.log("🎵 Música da Cutscene tocando!");
-          musicStarted = true;
-        })
-        .catch(() => {
-          console.log("🔇 Clique na Cutscene para tocar a música.");
-          document.addEventListener('click', function playOnClick() {
-            music.play();
-            musicStarted = true;
-            document.removeEventListener('click', playOnClick);
-          });
-        });
-    }
-  }
-
-  function stopMusic(): void {
-    music.pause();
-    music.currentTime = 0;
-    musicStarted = false;
-    console.log("🔇 Música da Cutscene parada");
-  }
 
   // 🖼️ Lista das imagens
   const imagens: string[] = [
@@ -228,10 +199,22 @@
     iniciarDigitação();
   }
 
+  function voltarCena(): void {
+    if (indexAtual > 0) {
+      indexAtual--;
+      iniciarDigitação();
+    }
+  }
+
   function finalizar(): void {
     clearInterval(intervaloDigitação);
-    stopMusic();
     goto("/fase1");
+  }
+
+  function sairCutscene(): void {
+    clearInterval(intervaloDigitação);
+    stopMusic();
+    goto("/");
   }
 
   function handleKeyDown(event: KeyboardEvent): void {
@@ -246,11 +229,22 @@
       event.stopPropagation();
       finalizar();
     }
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      sairCutscene();
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      event.stopPropagation();
+      voltarCena();
+    }
   }
 
   onMount(() => {
-    music.volume = currentVolume;
-    startMusic();
+    playMusic("/music/newgame.mp3");
     iniciarDigitação(); 
     window.addEventListener("keydown", handleKeyDown); 
   });
@@ -259,12 +253,15 @@
     clearInterval(intervaloDigitação); 
     window.removeEventListener("keydown", handleKeyDown);
     unsubscribeVolume();
-    stopMusic();
   });
 </script>
 
 <div class="cutscene-container">
   
+  <button class="esc-tip" onclick={sairCutscene}>
+    {$language === "pt" ? "Pressione ESC para sair" : "Press ESC to exit"}
+  </button>
+
   <button class="skip-tip" onclick={finalizar}>
     {$language === "pt" ? "Pressione [X] para pular" : "Press [X] to skip"}
   </button>
@@ -286,6 +283,7 @@
   </div>
 
   {#if !mostrarBalao}
+    <button class="prev-btn" onclick={voltarCena}>➟</button>
     <button class="next-btn" onclick={proximaCena}>➟</button>
   {/if}
 

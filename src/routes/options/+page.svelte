@@ -6,15 +6,7 @@
   function aumentarVolume(): void {
     volume.update((v: number) => {
       if (v < 1) {
-        const novoVolume = parseFloat((v + 0.1).toFixed(1));
-        console.log("🔊🔊🔊 AUMENTOU PARA:", novoVolume);
-        // 🔥 FORÇA O VOLUME DIRETO
-        const audioElements = document.querySelectorAll('audio');
-        audioElements.forEach(audio => {
-          audio.volume = novoVolume;
-          console.log("🎵 AUDIO DIRETO ATUALIZADO:", novoVolume);
-        });
-        return novoVolume;
+        return parseFloat((v + 0.1).toFixed(1));
       }
       return v;
     });
@@ -23,15 +15,7 @@
   function diminuirVolume(): void {
     volume.update((v: number) => {
       if (v > 0) {
-        const novoVolume = parseFloat((v - 0.1).toFixed(1));
-        console.log("🔊🔊🔊 DIMINUIU PARA:", novoVolume);
-        // 🔥 FORÇA O VOLUME DIRETO
-        const audioElements = document.querySelectorAll('audio');
-        audioElements.forEach(audio => {
-          audio.volume = novoVolume;
-          console.log("🎵 AUDIO DIRETO ATUALIZADO:", novoVolume);
-        });
-        return novoVolume;
+        return parseFloat((v - 0.1).toFixed(1));
       }
       return v;
     });
@@ -60,6 +44,7 @@
     </div>
 
     <div class="option-group">
+      <span class="label">{$language === "pt" ? "Idioma" : "Language"}</span>
       <button class="pixel-btn" onclick={alternarIdioma}>
         {$language === "pt" ? "Português" : "English"} 
       </button>
