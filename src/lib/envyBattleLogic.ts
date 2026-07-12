@@ -33,7 +33,7 @@ export const DODGE_BOX_W = 400;
 export const DODGE_BOX_H = 300;
 export const INVINCIBLE_MS = 500;
 
-export const BATTLE_INTRO_FALA: Record<string, string[]> = {
+export const BATTLE_INTRO_FALA: Record<"pt" | "en", string[]> = {
   pt: [
     "* Envy bloqueia seu caminho com um sorriso provocador.",
     "Um Hom\u00fanculo consumido pela inveja. Odeia a capacidade humana de criar conex\u00f5es verdadeiras.",
@@ -44,7 +44,7 @@ export const BATTLE_INTRO_FALA: Record<string, string[]> = {
   ],
 };
 
-export const ENVY_TURN_VARIACOES: Record<string, string[][]> = {
+export const ENVY_TURN_VARIACOES: Record<"pt" | "en", string[][]> = {
   pt: [
     ["Envy sorri de forma perturbadora.", "Voc\u00ea v\u00ea rostos familiares observando voc\u00ea..."],
     ["O ar fica pesado ao redor de Envy.", "Sombras come\u00e7am a tomar forma."],
@@ -57,7 +57,7 @@ export const ENVY_TURN_VARIACOES: Record<string, string[][]> = {
   ],
 };
 
-export const LUTAR_VARIACOES: Record<string, string[][]> = {
+export const LUTAR_VARIACOES: Record<"pt" | "en", string[][]> = {
   pt: [
     ["Voc\u00ea tentou acertar Envy.", "Ele riu e assumiu a apar\u00eancia de outra pessoa."],
     ["Voc\u00ea avança com um golpe r\u00e1pido.", "Envy desvia parcialmente, mas sente o impacto."],
@@ -70,7 +70,7 @@ export const LUTAR_VARIACOES: Record<string, string[][]> = {
   ],
 };
 
-export const BLEFAR_FALA: Record<string, Record<string, string[]>> = {
+export const BLEFAR_FALA: Record<string, Record<"pt" | "en", string[]>> = {
   stage1: {
     pt: [
       "Voc\u00ea diz que sabe o quanto Envy inveja os humanos.",
@@ -109,17 +109,17 @@ export const BLEFAR_FALA: Record<string, Record<string, string[]>> = {
   },
 };
 
-export const FUGIR_FAIL_FALA: Record<string, string[]> = {
+export const FUGIR_FAIL_FALA: Record<"pt" | "en", string[]> = {
   pt: ["Voc\u00ea tentou fugir...", "Envy bloqueou sua passagem."],
   en: ["You tried to flee...", "Envy blocked your path."],
 };
 
-export const FUGIR_OK_FALA: Record<string, string[]> = {
+export const FUGIR_OK_FALA: Record<"pt" | "en", string[]> = {
   pt: ["Voc\u00ea se afasta lentamente.", "Envy n\u00e3o parece interessado em perseguir voc\u00ea."],
   en: ["You slowly step away.", "Envy doesn't seem interested in chasing you."],
 };
 
-export const FINAL_BLOW_FALA: Record<string, string[]> = {
+export const FINAL_BLOW_FALA: Record<"pt" | "en", string[]> = {
   pt: [
     "Você desfere o golpe final!",
     "Envy cambaleia, sua forma começa a tremer descontroladamente.",
@@ -134,12 +134,12 @@ export const FINAL_BLOW_FALA: Record<string, string[]> = {
   ],
 };
 
-export const ITEM_POCAO_FALA: Record<string, string[]> = {
+export const ITEM_POCAO_FALA: Record<"pt" | "en", string[]> = {
   pt: ["Voc\u00ea usou uma Po\u00e7\u00e3o. Recuperou 20 HP!"],
   en: ["You used a Potion. Restored 20 HP!"],
 };
 
-export const ITEM_ELIXIR_FALA: Record<string, string[]> = {
+export const ITEM_ELIXIR_FALA: Record<"pt" | "en", string[]> = {
   pt: ["Voc\u00ea usou um Elixir. HP totalmente recuperado!"],
   en: ["You used an Elixir. HP fully restored!"],
 };

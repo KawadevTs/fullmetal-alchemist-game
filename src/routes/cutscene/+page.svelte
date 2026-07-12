@@ -235,6 +235,12 @@
       event.stopPropagation();
       voltarCena();
     }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      event.stopPropagation();
+      proximaCena();
+    }
   }
 
   onMount(() => {

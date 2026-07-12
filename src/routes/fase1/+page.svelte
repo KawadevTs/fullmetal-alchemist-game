@@ -14,7 +14,7 @@
   const WALK_LEFT: string = "/images/fase1/edwardC.png";
   const IDLE: string = "/images/fase1/edward.png";
 
-  const FALA: Record<string, string[]> = {
+  const FALA: Record<"pt" | "en", string[]> = {
     pt: [
       "Winry: Edward! Você está bem? Fiquei preocupada.",
       "Edward: Estou bem, Winry. Suas peças estão funcionando perfeitamente.",
@@ -27,7 +27,7 @@
     ],
   };
 
-  const VOVO_FALA: Record<string, string[]> = {
+  const VOVO_FALA: Record<"pt" | "en", string[]> = {
     pt: [
       "Vovó: Então... vocês chegaram até aqui. Eu tinha esperança de que encontrassem respostas, mas este lugar guarda mais mentiras do que verdades.",
       "Edward: Não importa. Se existir qualquer pista sobre a Pedra Filosofal, nós vamos encontrá-la.",
@@ -42,7 +42,7 @@
     ],
   };
 
-  const PORTAL_FALA: Record<string, string[]> = {
+  const PORTAL_FALA: Record<"pt" | "en", string[]> = {
     pt: ["Edward: Esse portal... eu conheço ele."],
     en: ["Edward: This portal... I know it."],
   };
