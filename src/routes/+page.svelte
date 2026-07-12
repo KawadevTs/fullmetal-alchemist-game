@@ -5,7 +5,7 @@
   import { language, playMusic, loadProgress, clearProgress } from "$lib/stores";
 
   const textos: Record<"pt" | "en", string[]> = {
-    pt: ["NOVO JOGO", "CONTINUE", "OPÇÕES", "CRÉDITOS", "SOBRE", "SAIR"],
+    pt: ["NOVO JOGO", "CONTINUAR", "OPÇÕES", "CRÉDITOS", "SOBRE", "SAIR"],
     en: ["NEW GAME", "CONTINUE", "OPTIONS", "CREDITS", "ABOUT", "EXIT"]
   };
 
