@@ -402,9 +402,9 @@
     const edge: number = randomBetween(0, 3); // 0=top,1=right,2=bottom,3=left
     let x: number, y: number, w: number, h: number, speed: number, dir: Obstacle["dir"];
     if (type === "face") {
-      w = 36; h = 44; speed = 2 + Math.random() * 2;
+      w = 36; h = 44; speed = 3.8 + Math.random() * 3.8;
     } else {
-      w = 12; h = 60; speed = 3;
+      w = 12; h = 60; speed = 5.7;
     }
     switch (edge) {
       case 0: x = randomBetween(0, DODGE_BOX_W - w); y = -h; dir = "down"; break;

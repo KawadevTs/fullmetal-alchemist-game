@@ -92,18 +92,15 @@
     letter-spacing: 1px;
   }
 
-  /* ─── Escolhas iniciais (pré-batalha) ─── */
+  /* ─── Escolhas iniciais (pré-batalha) — ancoradas abaixo da Envy ─── */
   .choices {
     position: absolute;
-    bottom: 200px;
+    top: 515px;
     z-index: 30;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    width: 100%;
-    max-width: 640px;
-    padding: 0 40px;
-    box-sizing: border-box;
+    gap: 18px;
+    width: max-content;
     left: 50%;
     transform: translateX(-50%);
   }
@@ -111,10 +108,10 @@
   .choice-btn {
     background: rgba(0, 0, 0, 0.92);
     border: 3px solid #555;
-    padding: 16px 24px;
+    padding: 14px 28px;
     color: #fff;
     font-family: 'Press Start 2P', monospace;
-    font-size: 11px;
+    font-size: 14px;
     cursor: pointer;
     transition: color 0.2s, border-color 0.2s;
     text-align: center;
