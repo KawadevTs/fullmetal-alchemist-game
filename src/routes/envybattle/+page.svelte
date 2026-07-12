@@ -120,6 +120,8 @@
   let endingTimer: ReturnType<typeof setTimeout> | null = null;
   let hitFlashTimer: ReturnType<typeof setTimeout> | null = null;
   let invincibleTimer: ReturnType<typeof setTimeout> | null = null;
+  let dodgeShaking = $state<boolean>(false);
+  let dodgeShakeTimer: ReturnType<typeof setTimeout> | null = null;
 
   // ═══════════════════════════════════════════════
   // TYPEWRITER
@@ -419,6 +421,8 @@
     obstacles = [];
     dodgeKeys.clear();
     invincible = false;
+    dodgeShaking = false;
+    clearTimeout(dodgeShakeTimer!);
     battlePhase = "dodge";
     dodgeSecondsLeft = 6;
 
@@ -462,6 +466,10 @@
           if (hx < o.x + o.w && hx + hs > o.x && hy < o.y + o.h && hy + hs > o.y) {
             playerHp = Math.max(0, playerHp - DANO_ESQUIVA);
             invincible = true;
+            clearTimeout(dodgeShakeTimer!);
+            dodgeShaking = false;
+            requestAnimationFrame((): void => { dodgeShaking = true; });
+            dodgeShakeTimer = setTimeout((): void => { dodgeShaking = false; }, 400);
             invincibleTimer = setTimeout((): void => { invincible = false; }, INVINCIBLE_MS);
             if (playerHp <= 0) {
               clearTimeout(dodgeTimeout!);
@@ -691,7 +699,7 @@
     <!-- Dodge minigame -->
     {#if battlePhase === "dodge"}
       <div class="dodge-wrapper">
-        <div class="dodge-box">
+        <div class="dodge-box" class:shake={dodgeShaking}>
           <div class="dodge-heart" style="left: {heartX}px; top: {heartY}px;">&#9829;</div>
 
           {#each obstacles as obs (obs.id)}

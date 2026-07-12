@@ -117,7 +117,7 @@
     font-size: 11px;
     cursor: pointer;
     transition: color 0.2s, border-color 0.2s;
-    text-align: left;
+    text-align: center;
     line-height: 1.6;
     letter-spacing: 0.5px;
   }
@@ -293,6 +293,23 @@
     border: 3px solid #888;
     background: rgba(0, 0, 0, 0.85);
     overflow: hidden;
+  }
+
+  .dodge-box.shake {
+    animation: dodgeShake 0.4s ease-in-out;
+  }
+
+  @keyframes dodgeShake {
+    0%, 100% { transform: translate(0); }
+    10% { transform: translate(-6px, 4px); }
+    20% { transform: translate(5px, -5px); }
+    30% { transform: translate(-4px, 2px); }
+    40% { transform: translate(4px, -3px); }
+    50% { transform: translate(-3px, 4px); }
+    60% { transform: translate(3px, -2px); }
+    70% { transform: translate(-2px, 3px); }
+    80% { transform: translate(2px, -1px); }
+    90% { transform: translate(-1px, 1px); }
   }
 
   .dodge-heart {

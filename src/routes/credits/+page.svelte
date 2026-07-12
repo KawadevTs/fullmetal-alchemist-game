@@ -19,7 +19,7 @@
 
       <div class="credits-list">
         <p>Gabrielly Oliveira</p>
-        <p>Natasha Scanoni</p>
+        <p>Nathasha Scanoni</p>
         <p>Shislayny Evelen</p>
         <p>Tacila Souza</p>
         <p>Wesllan Kawã</p>
