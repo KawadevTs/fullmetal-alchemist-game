@@ -10,7 +10,7 @@
     INVINCIBLE_MS,
     BATTLE_INTRO_FALA, ENVY_TURN_VARIACOES, LUTAR_VARIACOES,
     BLEFAR_FALA, FUGIR_FAIL_FALA, FUGIR_OK_FALA,
-    DERROTA_FALA, FINAL_BLOW_FALA, ITEM_POCAO_FALA, ITEM_ELIXIR_FALA,
+    FINAL_BLOW_FALA, ITEM_POCAO_FALA, ITEM_ELIXIR_FALA,
     clamp, randomBetween, calcularDanoLutar
   } from "$lib/envyBattleLogic";
 
@@ -80,55 +80,56 @@
   type Phase = "mystery" | "reveal" | "dialogue" | "choice" | "consequence" | "common" | "battle";
 
   let phase = $state<Phase>("mystery");
-  let inDialogue = $state(false);
+  let inDialogue = $state<boolean>(false);
   let dialLines = $state<string[]>([]);
-  let dialIdx = $state(0);
-  let typed = $state("");
-  let charIdx = $state(0);
-  let chosen = $state<"A" | "B" | "C" | null>(null);
-  let lang = $state("pt");
+  let dialIdx = $state<number>(0);
+  let typed = $state<string>("");
+  let charIdx = $state<number>(0);
+  let lang = $state<"pt" | "en">("pt");
 
   let typeTimer: ReturnType<typeof setInterval> | null = null;
   let revealTimer: ReturnType<typeof setTimeout> | null = null;
 
-  const unsub = language.subscribe((v) => lang = v);
+  const unsub = language.subscribe((v: "pt" | "en"): void => { lang = v; });
 
   // ═══════════════════════════════════════════════
   // BATTLE STATE
   // ═══════════════════════════════════════════════
 
   let battlePhase = $state<BattlePhase>("battleIntro");
-  let playerHp = $state(PLAYER_MAX_HP);
-  let envyHp = $state(ENVY_MAX_HP);
-  let envyAtk = $state(18);
-  let envyDef = $state(15);
-  let blefarStage = $state(0);
-  let envyEnraged = $state(false);
-  let portraitSrc = $state("/images/envybattle/envy_full.png");
+  let playerHp = $state<number>(PLAYER_MAX_HP);
+  let envyHp = $state<number>(ENVY_MAX_HP);
+  let envyDef = $state<number>(15);
+  let blefarStage = $state<number>(0);
+  let envyEnraged = $state<boolean>(false);
+  let portraitSrc = $state<string>("/images/envybattle/envy_full.png");
 
   // Dodge state
-  let heartX = $state(DODGE_BOX_W / 2);
-  let heartY = $state(DODGE_BOX_H / 2);
+  let heartX = $state<number>(DODGE_BOX_W / 2);
+  let heartY = $state<number>(DODGE_BOX_H / 2);
   let obstacles = $state<Obstacle[]>([]);
-  let invincible = $state(false);
-  let dodgeSecondsLeft = $state(6);
+  let invincible = $state<boolean>(false);
+  let dodgeSecondsLeft = $state<number>(6);
 
   let dodgeKeys = new Set<string>();
-  let dodgeRaf = 0;
-  let obstacleIdCounter = 0;
+  let dodgeRaf: number = 0;
+  let obstacleIdCounter: number = 0;
   let dodgeIntervals: ReturnType<typeof setInterval>[] = [];
   let dodgeTimeout: ReturnType<typeof setTimeout> | null = null;
   let pendingAction: string | null = null;
+  let endingTimer: ReturnType<typeof setTimeout> | null = null;
+  let hitFlashTimer: ReturnType<typeof setTimeout> | null = null;
+  let invincibleTimer: ReturnType<typeof setTimeout> | null = null;
 
   // ═══════════════════════════════════════════════
   // TYPEWRITER
   // ═══════════════════════════════════════════════
 
-  function startType() {
+  function startType(): void {
     typed = "";
     charIdx = 0;
     clearInterval(typeTimer!);
-    typeTimer = setInterval(() => {
+    typeTimer = setInterval((): void => {
       if (charIdx < dialLines[dialIdx].length) {
         typed += dialLines[dialIdx][charIdx];
         charIdx++;
@@ -139,7 +140,7 @@
     }, 30);
   }
 
-  function showDialogue(lines: string[]) {
+  function showDialogue(lines: string[]): void {
     dialLines = lines;
     dialIdx = 0;
     inDialogue = true;
@@ -150,7 +151,7 @@
   // ADVANCE DIALOGUE
   // ═══════════════════════════════════════════════
 
-  function adv() {
+  function adv(): void {
     // Complete current line if still typing
     if (!typeTimer && typed.length < dialLines[dialIdx].length) {
       typed = dialLines[dialIdx];
@@ -179,7 +180,7 @@
   }
 
   function isTransformText(text: string): boolean {
-    const lower = text.toLowerCase();
+    const lower: string = text.toLowerCase();
     return (
       lower.includes("assumiu") ||
       lower.includes("appearance of someone") ||
@@ -190,12 +191,12 @@
     );
   }
 
-  function advanceIntro() {
+  function advanceIntro(): void {
     switch (phase) {
       case "mystery":
         inDialogue = false;
         phase = "reveal";
-        revealTimer = setTimeout(() => {
+        revealTimer = setTimeout((): void => {
           phase = "dialogue";
           showDialogue(MAIN_FALA[lang] ?? MAIN_FALA.pt);
         }, 3000);
@@ -216,7 +217,7 @@
     }
   }
 
-  function advanceBattle() {
+  function advanceBattle(): void {
     switch (battlePhase) {
       case "battleIntro":
         inDialogue = false;
@@ -225,7 +226,7 @@
       case "playerAction":
         inDialogue = false;
         if (pendingAction) {
-          const action = pendingAction;
+          const action: string = pendingAction;
           pendingAction = null;
           executeAction(action);
         }
@@ -233,7 +234,7 @@
       case "itemSubmenu":
         inDialogue = false;
         if (pendingAction) {
-          const action = pendingAction;
+          const action: string = pendingAction;
           pendingAction = null;
           executeAction(action);
         }
@@ -253,16 +254,17 @@
   // ENTER BATTLE
   // ═══════════════════════════════════════════════
 
-  function enterBattle() {
+  function enterBattle(): void {
     battlePhase = "battleIntro";
     portraitSrc = "/images/envybattle/envy_battle.png";
+    playMusic("/music/boss_theme.mp3");
     showDialogue(BATTLE_INTRO_FALA[lang] ?? BATTLE_INTRO_FALA.pt);
   }
 
-  function showEnvyTurn() {
+  function showEnvyTurn(): void {
     battlePhase = "envyTurn";
-    const vars = ENVY_TURN_VARIACOES[lang] ?? ENVY_TURN_VARIACOES.pt;
-    const idx = Math.floor(Math.random() * vars.length);
+    const vars: string[][] = ENVY_TURN_VARIACOES[lang] ?? ENVY_TURN_VARIACOES.pt;
+    const idx: number = Math.floor(Math.random() * vars.length);
     showDialogue(vars[idx]);
   }
 
@@ -270,31 +272,31 @@
   // ACTIONS
   // ═══════════════════════════════════════════════
 
-  function actionLutar() {
+  function actionLutar(): void {
     pendingAction = "lutar";
     battlePhase = "playerAction";
-    const vars = LUTAR_VARIACOES[lang] ?? LUTAR_VARIACOES.pt;
-    const idx = Math.floor(Math.random() * vars.length);
+    const vars: string[][] = LUTAR_VARIACOES[lang] ?? LUTAR_VARIACOES.pt;
+    const idx: number = Math.floor(Math.random() * vars.length);
     showDialogue(vars[idx]);
   }
 
-  function actionBlefar() {
+  function actionBlefar(): void {
     pendingAction = "blefar";
     battlePhase = "playerAction";
     if (blefarStage >= 3) {
       showDialogue(BLEFAR_FALA.done[lang] ?? BLEFAR_FALA.done.pt);
     } else {
-      const key = `stage${blefarStage + 1}` as keyof typeof BLEFAR_FALA;
+      const key: string = `stage${blefarStage + 1}`;
       showDialogue(BLEFAR_FALA[key][lang] ?? BLEFAR_FALA[key].pt);
     }
   }
 
-  function actionItem() {
+  function actionItem(): void {
     pendingAction = null;
     battlePhase = "itemSubmenu";
   }
 
-  function actionFugir() {
+  function actionFugir(): void {
     pendingAction = "fugir";
     battlePhase = "playerAction";
     if (blefarStage >= 3) {
@@ -304,26 +306,26 @@
     }
   }
 
-  function usePocao() {
-    const healed = Math.min(playerHp + 20, PLAYER_MAX_HP);
+  function usePocao(): void {
+    const healed: number = Math.min(playerHp + 20, PLAYER_MAX_HP);
     playerHp = healed;
     pendingAction = "item";
     battlePhase = "itemSubmenu";
     showDialogue(ITEM_POCAO_FALA[lang] ?? ITEM_POCAO_FALA.pt);
   }
 
-  function useElixir() {
+  function useElixir(): void {
     playerHp = PLAYER_MAX_HP;
     pendingAction = "item";
     battlePhase = "itemSubmenu";
     showDialogue(ITEM_ELIXIR_FALA[lang] ?? ITEM_ELIXIR_FALA.pt);
   }
 
-  function executeAction(action: string) {
+  function executeAction(action: string): void {
     switch (action) {
       case "lutar": {
-        const dano = calcularDanoLutar(envyDef);
-        const isFinalBlow = dano >= envyHp;
+        const dano: number = calcularDanoLutar(envyDef);
+        const isFinalBlow: boolean = dano >= envyHp;
         if (isFinalBlow) {
           envyHp = 0;
           showHitFlash();
@@ -335,7 +337,7 @@
             envyEnraged = true;
           }
           showHitFlash();
-          const danoLine = `${lang === "pt" ? "Envy sofreu dano!" : "Envy took damage!"}`;
+          const danoLine: string = `${lang === "pt" ? "Envy sofreu dano!" : "Envy took damage!"}`;
           pendingAction = "afterLutar";
           showDialogue([danoLine]);
         }
@@ -352,8 +354,8 @@
         }
         blefarStage++;
         if (blefarStage === 1) envyDef = 12;
-        else if (blefarStage === 2) { envyAtk = 20; envyDef = 9; }
-        else if (blefarStage === 3) { envyAtk = 15; }
+        else if (blefarStage === 2) { envyDef = 9; }
+        else if (blefarStage === 3) { /* ATK nerf via dialogue only */ }
         showEnvyTurn();
         break;
       }
@@ -375,38 +377,27 @@
     }
   }
 
-  function showVictory() {
-    stopMusic();
-    battlePhase = "victory";
-  }
-
-  function showDefeat() {
-    stopMusic();
-    saveProgress("envyBattle");
-    battlePhase = "defeat";
-  }
-
-  function showEnding() {
+  function showEnding(): void {
     stopMusic();
     saveProgress("postEnvy");
     battlePhase = "ending";
-    setTimeout(() => {
+    endingTimer = setTimeout((): void => {
       goto("/");
     }, 4000);
   }
 
-  function showHitFlash() {
+  function showHitFlash(): void {
     hitFlash = true;
-    setTimeout(() => { hitFlash = false; }, 250);
+    hitFlashTimer = setTimeout((): void => { hitFlash = false; }, 250);
   }
 
   // ═══════════════════════════════════════════════
   // DODGE MINIGAME
   // ═══════════════════════════════════════════════
 
-  function spawnObstacle(type: "face" | "arm") {
-    const id = ++obstacleIdCounter;
-    const edge = randomBetween(0, 3); // 0=top,1=right,2=bottom,3=left
+  function spawnObstacle(type: "face" | "arm"): void {
+    const id: number = ++obstacleIdCounter;
+    const edge: number = randomBetween(0, 3); // 0=top,1=right,2=bottom,3=left
     let x: number, y: number, w: number, h: number, speed: number, dir: Obstacle["dir"];
     if (type === "face") {
       w = 36; h = 44; speed = 2 + Math.random() * 2;
@@ -422,7 +413,7 @@
     obstacles = [...obstacles, { id, x, y, w, h, speed, dir, type }];
   }
 
-  function startDodge() {
+  function startDodge(): void {
     heartX = DODGE_BOX_W / 2;
     heartY = DODGE_BOX_H / 2;
     obstacles = [];
@@ -431,26 +422,26 @@
     battlePhase = "dodge";
     dodgeSecondsLeft = 6;
 
-    const faceInterval = setInterval(() => spawnObstacle("face"), 800);
-    const armInterval = setInterval(() => spawnObstacle("arm"), 1200);
+    const faceInterval: ReturnType<typeof setInterval> = setInterval((): void => { spawnObstacle("face"); }, 800);
+    const armInterval: ReturnType<typeof setInterval> = setInterval((): void => { spawnObstacle("arm"); }, 1200);
     dodgeIntervals = [faceInterval, armInterval];
-    const startTime = Date.now();
+    const startTime: number = Date.now();
 
-    dodgeTimeout = setTimeout(() => endDodge(), DODGE_DURATION_MS);
+    dodgeTimeout = setTimeout((): void => { endDodge(); }, DODGE_DURATION_MS);
 
-    function loop() {
+    function loop(): void {
       if (battlePhase !== "dodge") return;
 
-      const elapsed = Date.now() - startTime;
+      const elapsed: number = Date.now() - startTime;
       dodgeSecondsLeft = Math.ceil((DODGE_DURATION_MS - elapsed) / 1000);
 
-      const spd = 4;
+      const spd: number = 4;
       if (dodgeKeys.has("ArrowUp") || dodgeKeys.has("w") || dodgeKeys.has("W")) heartY = clamp(heartY - spd, 0, DODGE_BOX_H);
       if (dodgeKeys.has("ArrowDown") || dodgeKeys.has("s") || dodgeKeys.has("S")) heartY = clamp(heartY + spd, 0, DODGE_BOX_H);
       if (dodgeKeys.has("ArrowLeft") || dodgeKeys.has("a") || dodgeKeys.has("A")) heartX = clamp(heartX - spd, 0, DODGE_BOX_W);
       if (dodgeKeys.has("ArrowRight") || dodgeKeys.has("d") || dodgeKeys.has("D")) heartX = clamp(heartX + spd, 0, DODGE_BOX_W);
 
-      obstacles = obstacles.map((o) => {
+      obstacles = obstacles.map((o: Obstacle): Obstacle => {
         let { x, y } = o;
         switch (o.dir) {
           case "up": y -= o.speed; break;
@@ -459,19 +450,19 @@
           case "right": x += o.speed; break;
         }
         return { ...o, x, y };
-      }).filter((o) => {
+      }).filter((o: Obstacle): boolean => {
         if (o.x + o.w < -60 || o.x > DODGE_BOX_W + 60) return false;
         if (o.y + o.h < -60 || o.y > DODGE_BOX_H + 60) return false;
         return true;
       });
 
       if (!invincible) {
-        const hx = heartX, hy = heartY, hs = HEART_SIZE;
+        const hx: number = heartX, hy: number = heartY, hs: number = HEART_SIZE;
         for (const o of obstacles) {
           if (hx < o.x + o.w && hx + hs > o.x && hy < o.y + o.h && hy + hs > o.y) {
             playerHp = Math.max(0, playerHp - DANO_ESQUIVA);
             invincible = true;
-            setTimeout(() => { invincible = false; }, INVINCIBLE_MS);
+            invincibleTimer = setTimeout((): void => { invincible = false; }, INVINCIBLE_MS);
             if (playerHp <= 0) {
               clearTimeout(dodgeTimeout!);
               dodgeIntervals.forEach(clearInterval);
@@ -489,7 +480,7 @@
     dodgeRaf = requestAnimationFrame(loop);
   }
 
-  function endDodge() {
+  function endDodge(): void {
     dodgeIntervals.forEach(clearInterval);
     cancelAnimationFrame(dodgeRaf);
     obstacles = [];
@@ -500,8 +491,7 @@
   // INTRO CHOICE
   // ═══════════════════════════════════════════════
 
-  function choose(opt: "A" | "B" | "C") {
-    chosen = opt;
+  function choose(opt: "A" | "B" | "C"): void {
     if (opt === "A") {
       phase = "battle";
       enterBattle();
@@ -515,14 +505,14 @@
   // KEYBOARD
   // ═══════════════════════════════════════════════
 
-  function kd(e: KeyboardEvent) {
+  function kd(e: KeyboardEvent): void {
     if ((e.key === "Enter" || e.key === " ") && inDialogue) {
       e.preventDefault();
       adv();
       return;
     }
     if (battlePhase === "dodge") {
-      const arrows = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "W", "s", "S", "a", "A", "d", "D"];
+      const arrows: string[] = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "W", "s", "S", "a", "A", "d", "D"];
       if (arrows.includes(e.key)) {
         e.preventDefault();
         dodgeKeys.add(e.key);
@@ -530,7 +520,7 @@
     }
   }
 
-  function ku(e: KeyboardEvent) {
+  function ku(e: KeyboardEvent): void {
     if (battlePhase === "dodge") {
       dodgeKeys.delete(e.key);
     }
@@ -540,7 +530,7 @@
   // LIFECYCLE
   // ═══════════════════════════════════════════════
 
-  onMount(() => {
+  onMount((): void => {
     window.addEventListener("keydown", kd);
     window.addEventListener("keyup", ku);
     if (loadProgress() === "envyBattle") {
@@ -551,12 +541,15 @@
     }
   });
 
-  onDestroy(() => {
+  onDestroy((): void => {
     window.removeEventListener("keydown", kd);
     window.removeEventListener("keyup", ku);
     if (typeTimer) clearInterval(typeTimer);
     if (revealTimer) clearTimeout(revealTimer);
     if (dodgeTimeout) clearTimeout(dodgeTimeout);
+    if (endingTimer) clearTimeout(endingTimer);
+    if (hitFlashTimer) clearTimeout(hitFlashTimer);
+    if (invincibleTimer) clearTimeout(invincibleTimer);
     dodgeIntervals.forEach(clearInterval);
     cancelAnimationFrame(dodgeRaf);
     stopMusic();
@@ -564,13 +557,13 @@
   });
 
   // HP bar colors
-  let hpBarClass = $derived(
+  let hpBarClass = $derived<string>(
     playerHp / PLAYER_MAX_HP <= 0.25 ? "hp-bar-fill low"
     : playerHp / PLAYER_MAX_HP <= 0.5 ? "hp-bar-fill mid"
     : "hp-bar-fill"
   );
 
-  let hitFlash = $state(false);
+  let hitFlash = $state<boolean>(false);
 </script>
 
 <svelte:head>
@@ -591,13 +584,13 @@
 
   {#if phase === "choice"}
     <div class="choices">
-      <button class="choice-btn" onclick={() => choose("A")}>
+      <button class="choice-btn" onclick={(): void => { choose("A"); }}>
         {lang === "pt" ? "Eu vou acabar com voc\u00ea!" : "I'll finish you!"}
       </button>
-      <button class="choice-btn" onclick={() => choose("B")}>
+      <button class="choice-btn" onclick={(): void => { choose("B"); }}>
         {lang === "pt" ? "Responda \u00e0s nossas perguntas." : "Answer our questions."}
       </button>
-      <button class="choice-btn" onclick={() => choose("C")}>
+      <button class="choice-btn" onclick={(): void => { choose("C"); }}>
         {lang === "pt" ? "Observe o ambiente." : "Observe the surroundings."}
       </button>
     </div>
@@ -641,7 +634,7 @@
         <!-- Player HP bar -->
         <div class="hp-container">
           <div class="hp-label">
-            <span>{lang === "pt" ? "Edward" : "Edward"}</span>
+            <span>Edward</span>
             <span>{playerHp}/{PLAYER_MAX_HP}</span>
           </div>
           <div class="hp-bar-bg">
@@ -677,7 +670,7 @@
             <button class="item-btn" onclick={useElixir}>
               {lang === "pt" ? "Elixir (Cura total)" : "Elixir (Full heal)"}
             </button>
-            <button class="item-btn back" onclick={() => { battlePhase = "actionMenu"; }}>
+            <button class="item-btn back" onclick={(): void => { battlePhase = "actionMenu"; }}>
               {lang === "pt" ? "Voltar" : "Back"}
             </button>
           </div>
@@ -715,7 +708,7 @@
       <div class="result-screen">
         <p class="result-text">{lang === "pt" ? "Voc\u00ea derrotou Envy!" : "You defeated Envy!"}</p>
         <!-- TODO: o que acontece ap\u00f3s vencer -->
-        <button class="result-btn" onclick={() => goto("/")}>
+        <button class="result-btn" onclick={(): void => { goto("/"); }}>
           {lang === "pt" ? "Menu Principal" : "Main Menu"}
         </button>
       </div>
@@ -726,7 +719,7 @@
       <div class="result-screen">
         <p class="result-text">{lang === "pt" ? "Voc\u00ea foi derrotado..." : "You were defeated..."}</p>
         <!-- TODO: o que acontece ap\u00f3s derrota -->
-        <button class="result-btn" onclick={() => goto("/")}>
+        <button class="result-btn" onclick={(): void => { goto("/"); }}>
           {lang === "pt" ? "Menu Principal" : "Main Menu"}
         </button>
       </div>
@@ -738,7 +731,7 @@
         <p class="result-text">
           {lang === "pt" ? "Voc\u00ea fugiu com sucesso." : "You fled successfully."}
         </p>
-        <button class="result-btn" onclick={() => goto("/")}>
+        <button class="result-btn" onclick={(): void => { goto("/"); }}>
           {lang === "pt" ? "Menu Principal" : "Main Menu"}
         </button>
       </div>

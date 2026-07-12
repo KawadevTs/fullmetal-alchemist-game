@@ -2,14 +2,7 @@
   import "../../assets/styles/cutscene.css";
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
-  import { language, volume, playMusic, stopMusic } from "$lib/stores";
-
-  // 🎵 MÚSICA DA CUTSCENE
-  let currentVolume = $state<number>(0.1);
-
-  const unsubscribeVolume = volume.subscribe((value: number) => {
-    currentVolume = value;
-  });
+  import { language, playMusic, stopMusic } from "$lib/stores";
 
   // 🖼️ Lista das imagens
   const imagens: string[] = [
@@ -146,11 +139,11 @@
   let indexAtual = $state<number>(0);
   let textoExibido = $state<string>("");
   let caractereIndex = $state<number>(0);
-  let intervaloDigitação: any;
+  let intervaloDigitação: ReturnType<typeof setInterval> | null = null;
   let mostrarBalao = $state<boolean>(false);
 
   function iniciarDigitação(): void {
-    clearInterval(intervaloDigitação);
+    clearInterval(intervaloDigitação!);
     textoExibido = "";
     caractereIndex = 0;
     mostrarBalao = false; 
@@ -164,7 +157,7 @@
         textoExibido += textoCompleto[caractereIndex];
         caractereIndex++;
       } else {
-        clearInterval(intervaloDigitação);
+        clearInterval(intervaloDigitação!);
         if (indexAtual === 7) {
           mostrarBalao = true; 
         }
@@ -179,7 +172,7 @@
     const textoCompleto = atuais[indexAtual].texto;
 
     if (textoExibido.length < textoCompleto.length) {
-      clearInterval(intervaloDigitação);
+      clearInterval(intervaloDigitação!);
       textoExibido = textoCompleto;
       if (indexAtual === 7) mostrarBalao = true;
       return;
@@ -207,12 +200,13 @@
   }
 
   function finalizar(): void {
-    clearInterval(intervaloDigitação);
+    clearInterval(intervaloDigitação!);
+    stopMusic();
     goto("/fase1");
   }
 
   function sairCutscene(): void {
-    clearInterval(intervaloDigitação);
+    clearInterval(intervaloDigitação!);
     stopMusic();
     goto("/");
   }
@@ -250,9 +244,8 @@
   });
 
   onDestroy(() => {
-    clearInterval(intervaloDigitação); 
+    clearInterval(intervaloDigitação!); 
     window.removeEventListener("keydown", handleKeyDown);
-    unsubscribeVolume();
   });
 </script>
 

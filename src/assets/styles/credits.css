@@ -1,8 +1,9 @@
 /* 🌍 O espaço total da tela do jogo */
   .menu2 {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
+    position: absolute;
+    inset: 0;
+    width: 1366px;
+    height: 768px;
     margin: 0;
     padding: 0;
     overflow: hidden;

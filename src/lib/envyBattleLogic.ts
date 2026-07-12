@@ -32,8 +32,6 @@ export const HEART_SIZE = 20;
 export const DODGE_BOX_W = 400;
 export const DODGE_BOX_H = 300;
 export const INVINCIBLE_MS = 500;
-export const TRANSFORM_DURATION_MS = 8000;
-export const WINRY_TRANSFORM_DURATION_MS = 12000;
 
 export const BATTLE_INTRO_FALA: Record<string, string[]> = {
   pt: [
@@ -119,16 +117,6 @@ export const FUGIR_FAIL_FALA: Record<string, string[]> = {
 export const FUGIR_OK_FALA: Record<string, string[]> = {
   pt: ["Voc\u00ea se afasta lentamente.", "Envy n\u00e3o parece interessado em perseguir voc\u00ea."],
   en: ["You slowly step away.", "Envy doesn't seem interested in chasing you."],
-};
-
-export const VITORIA_FALA: Record<string, string[]> = {
-  pt: ["Voc\u00ea derrotou Envy!", ""],
-  en: ["You defeated Envy!", ""],
-};
-
-export const DERROTA_FALA: Record<string, string[]> = {
-  pt: ["Você foi derrotado...", ""],
-  en: ["You were defeated...", ""],
 };
 
 export const FINAL_BLOW_FALA: Record<string, string[]> = {

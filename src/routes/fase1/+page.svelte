@@ -2,18 +2,17 @@
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
   import "../../assets/styles/fase1.css";
-  import { language, stopMusic, playMusic } from "$lib/stores";
+  import { language, playMusic, stopMusic } from "$lib/stores";
 
   // ─── Constantes ─────────────────────────────────
-  const WORLD_W = 1690;
-  const SPEED = 4;
-  const WINRY_X = 700;
-  const VOVO_X = 1100;
-  const PORTAL_X = 1580;
-  const DIALOGUE_RANGE = 65;
-  const WALK_RIGHT = "/images/fase1/edward_walk.png";
-  const WALK_LEFT = "/images/fase1/edwardC.png";
-  const IDLE = "/images/fase1/edward.png";
+  const SPEED: number = 4;
+  const WINRY_X: number = 700;
+  const VOVO_X: number = 1051;
+  const PORTAL_X: number = 1250;
+  const DIALOGUE_RANGE: number = 65;
+  const WALK_RIGHT: string = "/images/fase1/edward_walk.png";
+  const WALK_LEFT: string = "/images/fase1/edwardC.png";
+  const IDLE: string = "/images/fase1/edward.png";
 
   const FALA: Record<string, string[]> = {
     pt: [
@@ -49,34 +48,33 @@
   };
 
   // ─── Estado ────────────────────────────────────
-  let playerX = $state(100);
-  let scrollX = $state(0);
-  let walking = $state(false);
-  let sprite = $state(IDLE);
-  let inDialogue = $state(false);
+  let playerX = $state<number>(100);
+  let walking = $state<boolean>(false);
+  let sprite = $state<string>(IDLE);
+  let inDialogue = $state<boolean>(false);
   let dialLines = $state<string[]>([]);
-  let dialIdx = $state(0);
-  let typed = $state("");
-  let charIdx = $state(0);
-  let metWinry = $state(false);
-  let metVovo = $state(false);
-  let passedPortal = $state(false);
-  let fading = $state(false);
-  let inPortalThought = $state(false);
+  let dialIdx = $state<number>(0);
+  let typed = $state<string>("");
+  let charIdx = $state<number>(0);
+  let metWinry = $state<boolean>(false);
+  let metVovo = $state<boolean>(false);
+  let passedPortal = $state<boolean>(false);
+  let fading = $state<boolean>(false);
+  let inPortalThought = $state<boolean>(false);
   let dialogueSource = $state<"winry" | "vovo" | "portal">("winry");
-  let lang = $state("pt");
-  let vw = $state(0);
+  let lang = $state<"pt" | "en">("pt");
 
-  let facingRight = $state(true);
+  let facingRight = $state<boolean>(true);
   let typeTimer: ReturnType<typeof setInterval> | null = null;
-  let raf = 0;
-  let right = $state(false);
-  let left = $state(false);
+  let portalTimer: ReturnType<typeof setTimeout> | null = null;
+  let raf: number = 0;
+  let right = $state<boolean>(false);
+  let left = $state<boolean>(false);
 
-  const unsub = language.subscribe((v) => lang = v);
+  const unsub = language.subscribe((v: "pt" | "en"): void => { lang = v; });
 
   // ─── Eventos de teclado ────────────────────────
-  function kd(e: KeyboardEvent) {
+  function kd(e: KeyboardEvent): void {
     if (inDialogue || inPortalThought) {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); adv(); }
       return;
@@ -84,13 +82,13 @@
     if (e.key === "d" || e.key === "D" || e.key === "ArrowRight") { e.preventDefault(); right = true; facingRight = true; }
     if (e.key === "a" || e.key === "A" || e.key === "ArrowLeft") { e.preventDefault(); left = true; facingRight = false; }
   }
-  function ku(e: KeyboardEvent) {
+  function ku(e: KeyboardEvent): void {
     if (e.key === "d" || e.key === "D" || e.key === "ArrowRight") { e.preventDefault(); right = false; }
     if (e.key === "a" || e.key === "A" || e.key === "ArrowLeft") { e.preventDefault(); left = false; }
   }
 
   // ─── Game loop ─────────────────────────────────
-  function loop() {
+  function loop(): void {
     walking = false;
 
     if (!inDialogue && !inPortalThought && !fading) {
@@ -100,10 +98,6 @@
 
     // Sprite: WALK_RIGHT (D) ou WALK_LEFT (A), IDLE quando parado
     sprite = walking ? (facingRight ? WALK_RIGHT : WALK_LEFT) : IDLE;
-
-    // Câmera segue o jogador (30% da esquerda da tela)
-    const target = playerX - vw * 0.3;
-    scrollX = Math.max(0, Math.min(target, WORLD_W - vw));
 
     // Colisão com Winry
     if (!metWinry && !inDialogue && Math.abs(playerX - WINRY_X) < DIALOGUE_RANGE) {
@@ -124,7 +118,7 @@
   }
 
   // ─── Diálogo ───────────────────────────────────
-  function triggerDial() {
+  function triggerDial(): void {
     inDialogue = true;
     dialogueSource = "winry";
     right = false; left = false; walking = false;
@@ -133,7 +127,7 @@
     startType();
   }
 
-  function triggerVovoDial() {
+  function triggerVovoDial(): void {
     inDialogue = true;
     dialogueSource = "vovo";
     right = false; left = false; walking = false;
@@ -141,10 +135,10 @@
     dialIdx = 0;
     startType();
   }
-  function startType() {
+  function startType(): void {
     typed = ""; charIdx = 0;
     clearInterval(typeTimer!);
-    typeTimer = setInterval(() => {
+    typeTimer = setInterval((): void => {
       if (charIdx < dialLines[dialIdx].length) {
         typed += dialLines[dialIdx][charIdx];
         charIdx++;
@@ -154,7 +148,7 @@
       }
     }, 30);
   }
-  function adv() {
+  function adv(): void {
     if (!typeTimer && typed.length < dialLines[dialIdx].length) {
       typed = dialLines[dialIdx]; return;
     }
@@ -174,7 +168,7 @@
   }
 
   // ─── Portal — pensamento antes de entrar ───────
-  function triggerPortalThought() {
+  function triggerPortalThought(): void {
     inPortalThought = true;
     dialogueSource = "portal";
     right = false; left = false; walking = false;
@@ -183,25 +177,26 @@
     startType();
   }
 
-  function enterPortal() {
+  function enterPortal(): void {
     passedPortal = true;
     fading = true;
-    setTimeout(() => goto("/envybattle"), 1000);
+    stopMusic();
+    portalTimer = setTimeout((): void => { goto("/envybattle"); }, 1000);
   }
 
   // ─── Lifecycle ─────────────────────────────────
-  onMount(() => {
-    vw = window.innerWidth;
+  onMount((): void => {
     playMusic("/music/newgame.mp3");
     window.addEventListener("keydown", kd);
     window.addEventListener("keyup", ku);
     raf = requestAnimationFrame(loop);
   });
-  onDestroy(() => {
+  onDestroy((): void => {
     window.removeEventListener("keydown", kd);
     window.removeEventListener("keyup", ku);
     cancelAnimationFrame(raf);
     if (typeTimer) clearInterval(typeTimer);
+    if (portalTimer) clearTimeout(portalTimer);
     unsub();
   });
 </script>
@@ -221,30 +216,31 @@
       draggable="false"
     />
 
-    <div class="world" style="transform: translateX(-{scrollX}px);">
+    <!-- Camada de entidades (personagens e portal) -->
+    <div class="entities">
 
-      <!-- Winry (NPC) -->
+      <!-- Winry (NPC) — estática -->
       <div
         class="char winry"
         style="left: {WINRY_X}px; background-image: url('/images/fase1/winry.png');"
       ></div>
 
-      <!-- Vovó (NPC) -->
+      <!-- Vovó (NPC) — estática -->
       <div
         class="char vovo"
         style="left: {VOVO_X}px; background-image: url('/images/fase1/vovo.png');"
       ></div>
 
-      <!-- Edward (jogador) -->
+      <!-- Edward (jogador) — único que se move -->
       <div
         class="char player"
         style="left: {playerX}px; background-image: url({sprite}); transform: scaleX({walking ? 1 : (facingRight ? 1 : -1)});"
       ></div>
 
-      <!-- Portal no fim -->
+      <!-- Portal — estático -->
       <div class="portal" style="left: {PORTAL_X}px;"></div>
 
-    </div><!-- /world -->
+    </div><!-- /entities -->
   </div><!-- /scene -->
 
   <!-- HUD -->

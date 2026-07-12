@@ -1,22 +1,19 @@
 /* ─── Reset ─── */
 .fase1 {
-  width: 100vw;
-  height: 100vh;
+  position: absolute;
+  inset: 0;
+  width: 1366px;
+  height: 768px;
   background: #000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   overflow: hidden;
   font-family: 'Press Start 2P', monospace;
-  position: relative;
 }
 
 /* ─── Viewport / câmera ─── */
 .scene {
-  width: 100vw;
-  height: 100vh;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  position: relative;
 }
 
 /* ─── Fundo responsivo (largura total da tela) ─── */
@@ -24,26 +21,24 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   z-index: 0;
   image-rendering: auto;
 }
 
-/* ─── Mundo (sprites e cenário) ─── */
-.world {
-  width: 1690px;
-  height: 100vh;
-  position: relative;
+/* ─── Entidades (sprites e portal, sobre o fundo) ─── */
+.entities {
+  position: absolute;
+  inset: 0;
   z-index: 1;
-  /* scrollX aplicado via style="transform: translateX(...)" */
 }
 
 /* ─── Sprites dos personagens ─── */
-.char {
+.fase1 .char {
   position: absolute;
-  bottom: 127px;
+  bottom: 146px;
   width: 100px;
   height: 140px;
   background-size: contain;
@@ -76,7 +71,7 @@
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  color: #666;
+  color: #aaa;
   font-size: 14px;
   letter-spacing: 2px;
   z-index: 10;

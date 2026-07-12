@@ -2,11 +2,8 @@
   import "../assets/styles/menu.css";
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
-  import { language, playMusic, stopMusic, loadProgress, clearProgress } from "$lib/stores";
+  import { language, playMusic, loadProgress, clearProgress } from "$lib/stores";
 
-  const music = new Audio("/music/newgame.mp3");
-  music.loop = true;
-  
   const textos: Record<"pt" | "en", string[]> = {
     pt: ["NOVO JOGO", "CONTINUE", "OPÇÕES", "CRÉDITOS", "SOBRE", "SAIR"],
     en: ["NEW GAME", "CONTINUE", "OPTIONS", "CREDITS", "ABOUT", "EXIT"]
@@ -15,7 +12,7 @@
   let selectedIndex = $state<number>(0);
   let currentLanguage: "pt" | "en" = $state<"pt" | "en">("pt");
 
-  const unsubscribe = language.subscribe((value: "pt" | "en") => {
+  const unsubscribe = language.subscribe((value: "pt" | "en"): void => {
     currentLanguage = value;
   });
 
@@ -25,16 +22,14 @@
     switch (selectedIndex) {
       case 0: // NOVO JOGO
         clearProgress();
-        music.pause();
-  playMusic("/music/newgame.mp3");
-  goto("/cutscene");
-  break;
+        playMusic("/music/newgame.mp3");
+        goto("/cutscene");
+        break;
 
       case 1: // CONTINUE
         {
           const saved = loadProgress();
           if (saved === "envyBattle") {
-            music.pause();
             playMusic("/music/newgame.mp3");
             goto("/envybattle");
           } else if (saved === "postEnvy") {
