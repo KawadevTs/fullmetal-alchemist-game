@@ -406,11 +406,14 @@
     } else {
       w = 12; h = 60; speed = 5.7;
     }
+    const BIAS: number = 0.65;
+    const randX: number = randomBetween(0, DODGE_BOX_W - w);
+    const randY: number = randomBetween(0, DODGE_BOX_H - h);
     switch (edge) {
-      case 0: x = randomBetween(0, DODGE_BOX_W - w); y = -h; dir = "down"; break;
-      case 1: x = DODGE_BOX_W; y = randomBetween(0, DODGE_BOX_H - h); dir = "left"; break;
-      case 2: x = randomBetween(0, DODGE_BOX_W - w); y = DODGE_BOX_H; dir = "up"; break;
-      default: x = -w; y = randomBetween(0, DODGE_BOX_H - h); dir = "right"; break;
+      case 0: x = heartX * BIAS + randX * (1 - BIAS); y = -h; dir = "down"; break;
+      case 1: x = DODGE_BOX_W; y = heartY * BIAS + randY * (1 - BIAS); dir = "left"; break;
+      case 2: x = heartX * BIAS + randX * (1 - BIAS); y = DODGE_BOX_H; dir = "up"; break;
+      default: x = -w; y = heartY * BIAS + randY * (1 - BIAS); dir = "right"; break;
     }
     obstacles = [...obstacles, { id, x, y, w, h, speed, dir, type }];
   }
@@ -461,9 +464,17 @@
       });
 
       if (!invincible) {
+        const HITBOX_SHRINK: number = 0.25;
         const hx: number = heartX, hy: number = heartY, hs: number = HEART_SIZE;
+        const hxBox: number = hx + hs * HITBOX_SHRINK;
+        const hyBox: number = hy + hs * HITBOX_SHRINK;
+        const hBoxSize: number = hs - hs * HITBOX_SHRINK * 2;
         for (const o of obstacles) {
-          if (hx < o.x + o.w && hx + hs > o.x && hy < o.y + o.h && hy + hs > o.y) {
+          const oxBox: number = o.x + o.w * HITBOX_SHRINK;
+          const oyBox: number = o.y + o.h * HITBOX_SHRINK;
+          const oBoxW: number = o.w - o.w * HITBOX_SHRINK * 2;
+          const oBoxH: number = o.h - o.h * HITBOX_SHRINK * 2;
+          if (hxBox < oxBox + oBoxW && hxBox + hBoxSize > oxBox && hyBox < oyBox + oBoxH && hyBox + hBoxSize > oyBox) {
             playerHp = Math.max(0, playerHp - DANO_ESQUIVA);
             invincible = true;
             clearTimeout(dodgeShakeTimer!);

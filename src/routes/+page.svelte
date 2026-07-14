@@ -2,11 +2,11 @@
   import "../assets/styles/menu.css";
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
-  import { language, playMusic, loadProgress, clearProgress } from "$lib/stores";
+  import { language, playMusic, clearProgress } from "$lib/stores";
 
   const textos: Record<"pt" | "en", string[]> = {
-    pt: ["NOVO JOGO", "CONTINUAR", "OPÇÕES", "CRÉDITOS", "SOBRE", "SAIR"],
-    en: ["NEW GAME", "CONTINUE", "OPTIONS", "CREDITS", "ABOUT", "EXIT"]
+    pt: ["NOVO JOGO", "CRÉDITOS", "SOBRE", "SAIR"],
+    en: ["NEW GAME", "CREDITS", "ABOUT", "EXIT"]
   };
 
   let selectedIndex = $state<number>(0);
@@ -26,41 +26,15 @@
         goto("/cutscene");
         break;
 
-      case 1: // CONTINUE
-        {
-          const saved = loadProgress();
-          if (saved === "envyBattle") {
-            playMusic("/music/newgame.mp3");
-            goto("/envybattle");
-          } else if (saved === "postEnvy") {
-            if (currentLanguage === "pt") {
-              alert("Continuação ainda não disponível.");
-            } else {
-              alert("Continuation not yet available.");
-            }
-          } else {
-            if (currentLanguage === "pt") {
-              alert("Nenhum save encontrado.");
-            } else {
-              alert("No save found.");
-            }
-          }
-        }
-        break;
-
-      case 2: // OPÇÕES
-        goto("/options");
-        break;
-
-      case 3: // CRÉDITOS
+      case 1: // CRÉDITOS
         goto("/credits");
         break;
 
-      case 4: // SOBRE
+      case 2: // SOBRE
         window.open("https://game-demoweek.vercel.app/", "_blank");
         break;
 
-      case 5: // SAIR
+      case 3: // SAIR
         window.close();
         break;
     }

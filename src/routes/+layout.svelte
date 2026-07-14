@@ -12,7 +12,7 @@
 	function recalcScale(): void {
 		const w: number = window.innerWidth;
 		const h: number = window.innerHeight;
-		const scale: number = Math.min(w / DESIGN_W, h / DESIGN_H);
+		const scale: number = Math.max(w / DESIGN_W, h / DESIGN_H);
 		const offsetX: number = (w - DESIGN_W * scale) / 2;
 		const offsetY: number = (h - DESIGN_H * scale) / 2;
 		stageStyle = [
