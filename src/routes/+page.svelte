@@ -5,8 +5,8 @@
   import { language, playMusic, clearProgress } from "$lib/stores";
 
   const textos: Record<"pt" | "en", string[]> = {
-    pt: ["NOVO JOGO", "CRÉDITOS", "SOBRE", "SAIR"],
-    en: ["NEW GAME", "CREDITS", "ABOUT", "EXIT"]
+    pt: ["NOVO JOGO", "CRÉDITOS", "OPÇÕES", "SOBRE", "SAIR"],
+    en: ["NEW GAME", "CREDITS", "OPTIONS", "ABOUT", "EXIT"]
   };
 
   let selectedIndex = $state<number>(0);
@@ -30,11 +30,15 @@
         goto("/credits");
         break;
 
-      case 2: // SOBRE
+      case 2: // OPÇÕES
+        goto("/options");
+        break;
+
+      case 3: // SOBRE
         window.open("https://game-demoweek.vercel.app/", "_blank");
         break;
 
-      case 3: // SAIR
+      case 4: // SAIR
         window.close();
         break;
     }
